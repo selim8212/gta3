@@ -1,0 +1,31 @@
+name: Build re3 WebAssembly
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v12
+        with:
+          version: latest
+
+      - name: Configure CMake with Emscripten
+        run: |
+          mkdir build
+          cd build
+          emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        run: |
+          cd build
+          cmake --build .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: re3-wasm-output
+          path: build/
